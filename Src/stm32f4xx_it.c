@@ -40,7 +40,6 @@ extern ADC_HandleTypeDef Adc1Handle;
 extern DMA_HandleTypeDef hdma_adc1;
 // extern USBD_HandleTypeDef USBD_Device_FS;
 uint8_t HID_Buffer[4];
-extern __IO uint16_t ADC1_Buffer[8];
 extern void HandleAdcCycle(void);
 
 

@@ -8,12 +8,12 @@ extern DMA_HandleTypeDef hdma_adc1;
 
 extern uint32_t ADct;
 
-extern __IO uint16_t ADC1_Buffer[8];
+extern __IO uint16_t ADC1_Buffer[256];
 
-static uint16_t ADC1_Cache[255][3];
+static uint16_t ADC1_Cache[256][4];
 static uint8_t  ADC1_Cache_ct = 0;
 
-static uint16_t ADC1_SuperCache[16][3];
+static uint16_t ADC1_SuperCache[16][4];
 static uint8_t  ADC1_SuperCache_ct = 0;
 
 extern uint16_t PedFiltering;

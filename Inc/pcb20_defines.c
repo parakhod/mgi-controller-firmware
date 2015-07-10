@@ -1,7 +1,7 @@
 #ifndef __PCB20_DEFINES
 #define __PCB20_DEFINES
 
-#define FW_VERSION "0.1.5"
+#define FW_VERSION "0.1.6"
 
 #define OLED_ON_TIME 180
 #define OLED_DIM_TIME 30

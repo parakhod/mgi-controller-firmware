@@ -8,7 +8,6 @@ extern uint8_t TVHS;
 extern uint32_t TVRR;
 
 extern uint32_t ADct;
-extern __IO uint16_t ADC1_Buffer[8];
 
 extern float CellVoltage;
 

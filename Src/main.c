@@ -36,7 +36,7 @@ static int ScreenDubMode=0;
 static char TextBuffer[256];
 static char TmpBuffer[256];
 
-static __IO uint16_t ADC1_Buffer[8];
+static __IO uint16_t ADC1_Buffer[256];
 
 char RCVBuffer[256];
 uint32_t RCVpos=0;
