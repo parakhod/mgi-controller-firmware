@@ -54,6 +54,9 @@ extern uint16_t Pedal_2_Hi;
 extern uint16_t Pedal_3_Lo;
 extern uint16_t Pedal_3_Hi;
 
+extern uint32_t d_trid;
+extern uint32_t d_totd;
+
 extern uint16_t Buttons;
 extern int ct;
 extern RTC_HandleTypeDef RtcHandle;
@@ -111,6 +114,7 @@ extern int d_front_fog;
 extern int d_rear_fog;
 extern int d_left;
 extern int d_right;
+extern int d_emerg;
 extern int d_brake;
 extern int d_cluster_pwr;
 
@@ -308,7 +312,9 @@ void UpdateOled(void)
     if (d_rear_fog)     {MaskBuffer[15] = MaskBuffer[16] = 'I';}
     if (d_brake)        {MaskBuffer[18] = MaskBuffer[19] = 'I';}
     OLED_fPrint("<L R> LB HB FF RF BR",MaskBuffer,4);
-    OLED_Print("                     ",5);
+    //OLED_Print("                     ",5);
+    sprintf(OledBuffer,"O:%08d T:%08d ",d_totd, d_trid);
+    OLED_Print(OledBuffer,5);   
     OLED_Print("                     ",6);
     
     sprintf(MaskBuffer,"                     ");
@@ -1099,7 +1105,7 @@ void BtnOkPress()
    OledSubPage = 0;
   }
   
-  if ((OledPage==Menu_Cluster_Status)&&(OledSubPage==2))
+  if ((OledPage==Menu_Cluster_Setup)&&(OledSubPage==2))
   {
    ClusterAutonomy = ChValue;
    EEPROM_WriteB(EE_ClusterAutonomy, ClusterAutonomy);

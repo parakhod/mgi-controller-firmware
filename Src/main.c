@@ -58,6 +58,7 @@ static uint32_t CT_10ms;
 static uint32_t CT_20ms;
 static uint32_t CT_50ms;
 static uint32_t CT_100ms;
+static uint32_t CT_250ms;
 static uint32_t CT_500ms;
 static uint32_t CT_1000ms;
 static uint32_t CT_10000ms;
@@ -66,6 +67,7 @@ static void Evt_10ms(void);
 static void Evt_20ms(void);
 static void Evt_50ms(void);
 static void Evt_100ms(void);
+static void Evt_250ms(void);
 static void Evt_500ms(void);
 static void Evt_1000ms(void);
 static void Evt_10000ms(void);
@@ -81,7 +83,7 @@ static int d_temp = 0;       //Temperature
 static int d_park_dst = 15;  //Park distance 0-15
 static int d_odo = 0;      
 
-int d_cluster_pwr=0;
+int d_cluster_pwr=1;
 
 int d_high_beam=0;  //indicator LEDs
 int d_low_beam=0;
@@ -90,6 +92,7 @@ int d_front_fog=0;
 int d_rear_fog=0;
 int d_left=0;
 int d_right=0;
+int d_emerg=0;
 int d_brake=0;
 int d_steering_e=0;
 int d_backlight_c=1;
@@ -97,7 +100,7 @@ int d_backlight_b=0;
 int d_liq_fl_e=0;
 int d_fault=0;
 int d_br_pads_e=0;
-int d_doors=0;
+uint8_t d_doors=0;
 int d_lfd=0;
 int d_rfd=0;
 int d_lrd=0;
@@ -114,10 +117,10 @@ int d_ab2_fl=0;
 int d_ab2=0;
 int d_ab1_fl=0;
 int d_ab_fail=0;
-int d_b_fl_1=0;
-int d_b_fl_2=0;
-int d_batt=0;
-int d_batt_fl=0;
+int d_b_fl_1=1;
+int d_b_fl_2=1;
+int d_batt=1;
+int d_batt_fl=1;
 int d_ss_c=0;
 int d_ss_u=0;
 int d_ss_ind=0;
@@ -127,7 +130,7 @@ int d_overheat=0;
 int d_oil=0;
 int d_oil_fl=0;
 int d_ch_oil=0;
-int d_asr=0;
+uint8_t d_asr=0;
 int d_esc=0;
 int d_ebd_f=0;
 int d_abs_u=0;
@@ -135,6 +138,80 @@ int d_esc_u=0;
 int d_shift_up=0;
 int d_shift_dn=0;
 int d_park=0;
+int d_tco_perf=0;
+int d_hb=0;
+int d_gear=0;
+int d_adblue=100;
+int d_deccel=0;
+int d_eb=0;
+int d_btn_up=0;
+int d_btn_esc=0;
+int d_btn_page=0;
+int d_btn_menu=0;
+int d_btn_minus=0;
+int d_btn_plus=0;
+int d_btn_down=0;
+uint32_t d_trid=0;
+uint32_t d_totd=0;
+uint32_t d_hours=0;
+uint8_t d_press_1=100;
+uint8_t d_press_2=100;
+uint8_t d_cruise_lcd=0;
+uint8_t d_cruise_led=0;
+uint8_t d_cruise_pto=0;
+uint8_t d_cruise_speed=0;
+uint8_t d_starter=0;
+uint8_t d_mirror=0;
+uint8_t d_beam_pos=0;
+uint8_t d_preheat=0;
+uint8_t d_speed_limit_led=0;
+uint8_t d_speed_limit_value=0;
+uint8_t d_speed_limit_set=0;
+uint8_t d_cab_tilted=0;
+uint8_t d_oil_press_low=0;
+uint8_t d_oil_temp_high=0;
+uint8_t d_tlr_lcd=0;
+uint8_t d_tlr_led=0;
+uint8_t d_br_err_1=0;
+uint8_t d_br_err_2=0;
+uint8_t d_br_err_3=0;
+uint8_t d_tr_el_con=0;
+uint8_t d_etc7_mode=0x4C;
+uint8_t d_airsusp=0;
+uint8_t d_susp_lcm=0;
+uint8_t d_susp_lift=0;
+uint8_t d_1pto=0;
+uint8_t d_2pto=0;
+uint8_t d_3pto=0;
+uint8_t d_esp=0;
+uint8_t d_no_abs=0;
+uint8_t d_no_asr=0;
+uint8_t d_warning_1=0;
+uint8_t d_warning_2=0;
+uint8_t d_lock_front=0;
+uint8_t d_lock_center=0;
+uint8_t d_lock_rear=0;
+uint8_t d_oil_low=0;
+uint8_t d_oil_high=0;
+uint8_t d_coolant_low=0;
+uint8_t d_br_fluid_low=0;
+uint8_t d_st_fluid_low=0;
+uint8_t d_ws_fluid_low=0;
+uint8_t d_steer_error=0;
+uint8_t d_air_filter=0;
+uint8_t d_fuel_filter=0;
+uint8_t d_oil_filter=0;
+uint8_t d_water_tank=0;
+uint8_t d_oil_too_low=0;
+uint8_t d_coolant_too_low=0;
+uint8_t d_oil_level=128;
+uint8_t d_oil_pressure=128;
+uint16_t d_ext_temp=9536;
+uint8_t d_edc_warning=0;
+uint8_t d_edc_error=0;
+
+uint8_t d_tt[9];
+
 
 
 //EEPROM
@@ -244,6 +321,11 @@ static uint32_t VWIntns[4]={165,310,565,980}; //load-50k !
 static uint32_t WhBtns[6]={2830,400,1100,1630,2200,2600};
 static uint32_t OnOff[2]={2831,360};
 
+static uint32_t FIPl[2]={1000,360};
+static uint32_t FIDir[3]={350,1750,2500}; 
+static uint32_t FIWs[4]={2600, 1800, 1010, 350};
+static uint32_t FIWash[3]={2600,2090,350};
+
 static uint32_t MBuffer[12][12];
 static uint32_t MBuffer_old[12][12];
 
@@ -282,14 +364,13 @@ static int OledDimCt = OLED_ON_TIME;
 /* Private function prototypes -----------------------------------------------*/
 
 
-int main(void)
+  int main(void)
 {
 
   System_Init(); //SysClock & GPIO
 
   LED_ON(0);
     
-  CAN_Init();    //CANbus
 
   I2C_I_Init();  //Internal I2C
        
@@ -421,6 +502,9 @@ int main(void)
  }
  
    I2C_E_Init();                              //External I2C
+  
+   CAN_Init();    //CANbus
+
    
 if (LEDDriverEN)                     
 {
@@ -510,6 +594,7 @@ if (LCellEN)
   CT_20ms = HAL_GetTick();
   CT_50ms = HAL_GetTick();
   CT_100ms = HAL_GetTick();
+  CT_250ms = HAL_GetTick();
   CT_500ms = HAL_GetTick();
   CT_1000ms = HAL_GetTick();
   
@@ -549,6 +634,12 @@ if (LCellEN)
       Evt_100ms();
     }
     
+    if ((HAL_GetTick() - CT_250ms) >= 250)    //250ms
+    {
+      CT_250ms = HAL_GetTick();  
+      Evt_250ms();
+    }
+    
     if ((HAL_GetTick() - CT_500ms) >= 500)    //500ms
     {
       CT_500ms = HAL_GetTick();  
@@ -574,6 +665,8 @@ if (LCellEN)
 
 void Evt_10ms(void)      // ====================== Event 10 ms =============================
 {
+    CAN_Cluster_10ms();
+    
     GetPedals();
     
     if (SpecMode==2) {
@@ -922,6 +1015,8 @@ void Evt_50ms(void)      // ====================== Event 50 ms =================
 
 void Evt_100ms(void)      // ====================== Event 100 ms =============================
 {
+   CAN_Cluster_100ms(); 
+  
  UpdateOled();
    // LED_SW(0);
      //OLED_Bright(bright++);
@@ -939,9 +1034,17 @@ void Evt_100ms(void)      // ====================== Event 100 ms ===============
  
 }
 
+void Evt_250ms(void)      // ====================== Event 250 ms =============================
+{
+   CAN_Cluster_250ms(); 
+ 
+}
+
+
 void Evt_500ms(void)      // ====================== Event 500 ms =============================
 {
  // if (CC_GPIO[0]) 
+    CAN_Cluster_500ms();
     
   if (blink) {blink=0;} else {blink=1;}
   
@@ -960,9 +1063,11 @@ void Evt_500ms(void)      // ====================== Event 500 ms ===============
 
 void Evt_1000ms(void)      // ====================== Event 1 sec =============================
 {
+    CAN_Cluster_1000ms(); 
+  
   if(ADT7410_Inited) {ADT7410_Request();}
   
-  
+
    // sprintf(TextBuffer,"Resistor = %d     \r\n", 1);
    // USB_Print(TextBuffer);
     // USBD_CDC_SetTxBuffer(&USBD_Device, (unsigned char*)TextBuffer, strlen((char const *)TextBuffer));    
@@ -1484,6 +1589,21 @@ p = strchr(COM_In_Buffer, ':');
         d_right = vv[0];
        } 
        
+       if (CmpStr(CmdString, "EMERG", '=')) 
+       {
+        d_emerg = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "B_FL_1", '=')) 
+       {
+        d_b_fl_1 = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "B_FL_2", '=')) 
+       {
+        d_b_fl_2 = vv[0];
+       }
+       
        if (CmpStr(CmdString, "TURN", '=')) 
        {
         d_left = 0;
@@ -1560,8 +1680,399 @@ p = strchr(COM_In_Buffer, ':');
         d_fuel_need = vv[0];
        } 
        
+       if (CmpStr(CmdString, "TCO_PERF", '=')) 
+       {
+        d_tco_perf = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "HB", '=')) 
+       {
+        d_hb = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "GEAR", '=')) 
+       {
+        d_gear = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "ADBLUE", '=')) 
+       {
+        d_adblue = vv[0]*2.55;
+       } 
+       
+       if (CmpStr(CmdString, "DECCEL", '=')) 
+       {
+        d_deccel = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "EB", '=')) 
+       {
+        d_eb = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BTN_UP", '=')) 
+       {
+        d_btn_up = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BTN_ESC", '=')) 
+       {
+        d_btn_esc = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BTN_PAGE", '=')) 
+       {
+        d_btn_page = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BTN_MENU", '=')) 
+       {
+        d_btn_menu = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BTN_MINUS", '=')) 
+       {
+        d_btn_minus = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BTN_PLUS", '=')) 
+       {
+        d_btn_plus = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BTN_DOWN", '=')) 
+       {
+        d_btn_down = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "TRIP_DST", '=')) 
+       {
+        d_trid = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "TOTAL_DST", '=')) 
+       {
+        d_totd = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "HOURS", '=')) 
+       {
+        d_hours = vv[0];
+       } 
+       
+              
+       if (CmpStr(CmdString, "PRESS_1", '=')) 
+       {
+        d_press_1 = vv[0]*1.4;
+       } 
+       
+       if (CmpStr(CmdString, "PRESS_2", '=')) 
+       {
+        d_press_2 = vv[0]*1.4;
+       } 
+       
+       if (CmpStr(CmdString, "CRUISE_LED", '=')) 
+       {
+        d_cruise_led = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "CRUISE_LCD", '=')) 
+       {
+        d_cruise_lcd = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "CRUISE_PTO", '=')) 
+       {
+        d_cruise_pto = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "CRUISE_SPEED", '=')) 
+       {
+        d_cruise_speed = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "STARTER", '=')) 
+       {
+        d_starter = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "MIRROR", '=')) 
+       {
+        d_mirror = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "DOORS", '=')) 
+       {
+        d_doors = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BEAM_POS", '=')) 
+       {
+        d_beam_pos = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "PREHEAT", '=')) 
+       {
+        d_preheat = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "SP_LIMIT_LED", '=')) 
+       {
+        d_speed_limit_led = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "SP_LIMIT_VALUE", '=')) 
+       {
+        d_speed_limit_value = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "SP_LIMIT_SET", '=')) 
+       {
+        d_speed_limit_set = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "CHECK_ENGINE", '=')) 
+       {
+        d_check = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "FL_CHECK_ENGINE", '=')) 
+       {
+        d_check_fl = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "CAB_TILTED", '=')) 
+       {
+        d_cab_tilted = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "OIL_PRESS_LOW", '=')) 
+       {
+        d_oil_press_low = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "OIL_TEMP_HIGH", '=')) 
+       {
+        d_oil_temp_high = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "TLR_LCD", '=')) 
+       {
+        d_tlr_lcd = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "TLR_LED", '=')) 
+       {
+        d_tlr_led = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BR_ERR_1", '=')) 
+       {
+        d_br_err_1 = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BR_ERR_2", '=')) 
+       {
+        d_br_err_2 = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "BR_ERR_3", '=')) 
+       {
+        d_br_err_3 = vv[0];
+       } 
+       
+
+       
+       if (CmpStr(CmdString, "PTO1", '=')) 
+       {
+        d_1pto = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "PTO2", '=')) 
+       {
+        d_2pto = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "PTO3", '=')) 
+       {
+        d_3pto = vv[0];
+       } 
+       
+       if (CmpStr(CmdString, "TR_EL_CON", '=')) 
+       {
+        d_tr_el_con = vv[0];
+       } 
+       
+        if (CmpStr(CmdString, "ETC7_MODE", '=')) 
+       {
+        d_etc7_mode = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "AIRSUSP", '=')) 
+       {
+        d_airsusp = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "SUSP_LCM", '=')) 
+       {
+        d_susp_lcm = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "SUSP_LIFT", '=')) 
+       {
+        d_susp_lift = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "ESP", '=')) 
+       {
+        d_esp = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "NO_ABS", '=')) 
+       {
+        d_no_abs = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "NO_ASR", '=')) 
+       {
+        d_no_asr = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "ASR", '=')) 
+       {
+        d_asr = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "WARNING_1", '=')) 
+       {
+        d_warning_1 = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "WARNING_2", '=')) 
+       {
+        d_warning_2 = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "LOCK_FRONT", '=')) 
+       {
+        d_lock_front = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "LOCK_CENTER", '=')) 
+       {
+        d_lock_center = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "LOCK_REAR", '=')) 
+       {
+        d_lock_rear = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "OIL_LOW", '=')) 
+       {
+        d_oil_low = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "OIL_HIGH", '=')) 
+       {
+        d_oil_high = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "COOLANT_LOW", '=')) 
+       {
+        d_coolant_low = vv[0];
+       }
+
+       if (CmpStr(CmdString, "BR_FLUID_LOW", '=')) 
+       {
+        d_br_fluid_low = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "ST_FLUID_LOW", '=')) 
+       {
+        d_st_fluid_low = vv[0];
+       }
+
+       if (CmpStr(CmdString, "WS_FLUID_LOW", '=')) 
+       {
+        d_ws_fluid_low = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "STEER_ERROR", '=')) 
+       {
+        d_steer_error = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "FILTER_AIR", '=')) 
+       {
+        d_air_filter = vv[0];
+       }
+
+       if (CmpStr(CmdString, "FILTER_FUEL", '=')) 
+       {
+        d_fuel_filter = vv[0];
+       }
+
+       if (CmpStr(CmdString, "FILTER_OIL", '=')) 
+       {
+        d_oil_filter = vv[0];
+       }       
+       
+       if (CmpStr(CmdString, "WATER_TANK", '=')) 
+       {
+        d_water_tank = vv[0];
+       }       
+
+       if (CmpStr(CmdString, "OIL_TOO_LOW", '=')) 
+       {
+        d_oil_too_low = vv[0];
+       }  
+       
+       if (CmpStr(CmdString, "COOLANT_TOO_LOW", '=')) 
+       {
+        d_coolant_too_low = vv[0];
+       }
+       
+       if (CmpStr(CmdString, "OIL_LEVEL", '=')) 
+       {
+        d_oil_level = vv[0];
+       }      
+       
+       if (CmpStr(CmdString, "OIL_PRESSURE", '=')) 
+       {
+        d_oil_pressure = vv[0];
+       }      
+       
+       if (CmpStr(CmdString, "EXT_TEMP", '=')) 
+       {
+        d_ext_temp = 0x2220 + (int)((float)(vv[0])*3.2f);
+       }   
+       
+       if (CmpStr(CmdString, "TEMP", '=')) 
+       {
+        d_temp = vv[0];
+       }   
+       
+       if (CmpStr(CmdString, "EDC_WARNING", '=')) 
+       {
+        d_edc_warning = vv[0];
+       }          
+       
+       if (CmpStr(CmdString, "EDC_ERROR", '=')) 
+       {
+        d_edc_error = vv[0];
+       }          
+       
+       //=========================================================
+       
+       if (CmpStr(CmdString, "TT", '=')) 
+       {
+        d_tt[vv[1]] = vv[0];
+       }
        
        
+       
+       //=========================================================
        if (CmpStr(CmdString, "LED_NOW", '=')) 
        {
         LedDrvSetNow( vv[0],vv[1] );
@@ -1794,7 +2305,7 @@ int GetIntValue(const char *s, int number)
     else
     {
      buf[i] = c;
-     if (isdigit(buf[i])==0) {digital = 0;}
+     if ((isdigit(buf[i])==0) && (buf[i]!='-')) {digital = 0;}
     }
     
     
@@ -1921,6 +2432,50 @@ void PollControls(int addr, int type)
   x_washer_r = PollR(addr, CPIN_07, PULL_1k, OnOff, 2);
   }
   
+  if (type== CT_FIAT_CONTROLS) {
+  
+   //ADG2128_ON(addr, MX_GND + CPIN_11);
+  ADG2128_ON(addr, MX_GND + CPIN_05);
+  /* 
+   int a12 = GetRes(addr,CPIN_12 ,PULL_1k);
+   int a11 = GetRes(addr,CPIN_11 ,PULL_1k);
+   int a10 = GetRes(addr,CPIN_10 ,PULL_1k);
+   int a9 = GetRes(addr,CPIN_09 ,PULL_1k);
+   int a8 = GetRes(addr,CPIN_08 ,PULL_1k);
+   int a7 = GetRes(addr,CPIN_07 ,PULL_1k);
+   int a6 = GetRes(addr,CPIN_06 ,PULL_1k);
+   int a5 = GetRes(addr,CPIN_05 ,PULL_1k);
+   int a4 = GetRes(addr,CPIN_04 ,PULL_1k);
+   int a3 = GetRes(addr,CPIN_03 ,PULL_1k);
+   int a2 = GetRes(addr,CPIN_02 ,PULL_1k);
+   int a1 = GetRes(addr,CPIN_01 ,PULL_1k);
+   
+   x_washer_r = a12 + a11 + a10 + a9 + a8 + a7 + a6 + a5 + a4 + a3 + a2 + a1;
+   
+   x_washer_f = x_washer_r + GetRes(addr, CPIN_05 ,PULL_1k);
+   */
+   x_low_beam  = PollR(addr, CPIN_08, PULL_1k, FIPl, 2);   
+   int resDir = PollR(addr, CPIN_12, PULL_1k, FIDir, 3);
+   x_left = resDir == 1;
+   x_right  = resDir == 0; 
+   
+   x_high_beam = GetRes(addr, CPIN_10 ,PULL_1k) < 2400;
+   
+   x_cc_set  = PollR(addr, CPIN_07, PULL_1k, OnOff, 2);
+   
+   ADG2128_ON(addr, MX_GND + CPIN_05);
+   x_wiper_r = PollR(addr, CPIN_06, PULL_1k, OnOff, 2);
+   int washers = PollR(addr, CPIN_04, PULL_1k, FIWash, 3);
+   x_washer_f = washers == 1;
+   x_washer_r = washers == 2;
+   
+  // ADG2128_OFF(addr, MX_GND + CPIN_05);
+   
+   x_wiper_f = PollR(addr, CPIN_11, PULL_1k, FIWs, 4);
+   
+
+  }
+  
   
   if (type== CT_VW_LIGHT) {
   
@@ -1980,16 +2535,19 @@ void PollControls(int addr, int type)
   
     
     //Autonomy section
-  d_backlight_c = x_pos_light;
-  d_high_beam = x_high_beam;
-  d_low_beam = x_low_beam;
-  d_rear_fog = x_rear_fog;
-  
-  if ((x_left || x_right) != x_blink) {DirBlinkCt = 0;}
-  x_blink = x_left || x_right;
-  
-  d_right = x_right && DirBlink;
-  d_left  = x_left && DirBlink;
+  if (ClusterAutonomy == 1) 
+  {
+    d_backlight_c = x_pos_light;
+    d_high_beam = x_high_beam;
+    d_low_beam = x_low_beam;
+    d_rear_fog = x_rear_fog;
+    
+    if ((x_left || x_right) != x_blink) {DirBlinkCt = 0;}
+    x_blink = x_left || x_right;
+    
+    d_right = x_right && DirBlink;
+    d_left  = x_left && DirBlink;
+  }
 }
 
 void Blinker(void)
